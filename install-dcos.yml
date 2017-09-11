@@ -1,0 +1,33 @@
+---
+
+- name: All Software Prerequisites
+  hosts: all
+  become: yes
+  become_method: sudo
+  vars_files:
+    - ./vars/config.yml
+    # - .config.yml
+  roles:
+    - docker
+    - dcos_pre
+
+- name: Bootstrap Software Prerequisites
+  hosts: bootstrap
+  become: yes
+  become_method: sudo
+  vars_files:
+    - ./vars/config.yml
+    # - .config.yml
+  roles:
+    - python
+    - bootstrap_pre
+
+- name: Cluster Software Prerequisites
+  hosts: cluster
+  become: yes
+  become_method: sudo
+  vars_files:
+    - ./vars/config.yml
+    # - .config.yml
+  roles:
+    - cluster_pre

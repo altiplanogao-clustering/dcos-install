@@ -1,0 +1,5 @@
+---
+
+resource_cache: "{{ playbook_dir | dirname }}/.resources"
+
+dev_user: swift

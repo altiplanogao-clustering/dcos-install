@@ -1,0 +1,12 @@
+[ req ]
+distinguished_name      = req_distinguished_name
+prompt                  = no
+
+[ req_distinguished_name ]
+C               = CN
+ST              = Shanghai
+L               = Shanghai
+O               = Organization Name
+OU              = Organizational Unit Name
+CN              = {{ docker_conf.custom_registry_hostname }}
+emailAddress    = admin@{{ docker_conf.custom_registry_hostname }}

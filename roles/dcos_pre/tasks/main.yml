@@ -1,0 +1,10 @@
+---
+
+- name: Disable sudo password prompts
+  lineinfile:
+    path: /etc/sudoers
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'
+    insertafter: '## Same thing without a password'
+
+# - name: Enable NTP
+#   check-> timedatectl

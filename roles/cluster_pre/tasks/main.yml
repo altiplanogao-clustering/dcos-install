@@ -1,0 +1,68 @@
+---
+
+# Uninstall old versions
+- name: Install 
+  package:
+    name: '{{ item_l2 }}'
+    state: present
+  with_items: [tar, xz, unzip, curl, ipset]
+  loop_control:
+    loop_var: item_l2
+
+- name: Check if .bk exist
+  stat: path="/etc/sysconfig/selinux.bk"
+  register: bkstat
+- name: Backup sources.list
+  copy:
+    remote_src: true
+    src: /etc/sysconfig/selinux
+    dest: /etc/sysconfig/selinux.bk
+  when: ( not bkstat.stat.exists )
+- name: Disable selinux
+  lineinfile:
+    path: /etc/sysconfig/selinux
+    regexp: '^SELINUX='
+    line: 'SELINUX=disabled'
+
+
+- name: Get uptime
+  shell: uptime
+  register: utstat
+- name: Print uptime
+  debug: msg='Uptime {{ utstat.stdout }}'
+
+- name: Reboot the server
+  # command: shutdown -r 0 "Ansible updates triggered"
+  shell: sleep 2 && shutdown -r 0 "Ansible updates triggered"
+  async: 0
+  poll: 0
+  ignore_errors: true
+  become: true
+- name: Wait for server come back
+  local_action: wait_for host={{ ansible_ssh_host }} state=started port=22 delay=20 timeout=60 connect_timeout=15
+  sudo: false
+
+- name: Get uptime
+  shell: uptime
+  register: utstat
+- name: Print uptime
+  debug: msg='Uptime {{ utstat.stdout }}'
+
+  # wait_for: >
+  #   host={{ inventory_hostname }}
+  #   port=22
+  #   delay=1
+  #   timeout=60
+  # delegate_to: localhost
+  # sudo: false
+
+# - name: Restart server
+#   shell: reboot
+# - name: Wait for server to restart
+#   local_action:
+#     module: wait_for
+#       host={{ inventory_hostname }}
+#       port=22
+#       delay=1
+#       timeout=300
+    # sudo: false

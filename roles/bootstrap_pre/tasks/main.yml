@@ -1,0 +1,4 @@
+---
+
+- name: make genconf
+  file: path="/genconf" state=directory

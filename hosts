@@ -1,0 +1,19 @@
+dcos-00 ansible_host=192.168.111.100 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd is_docker_registry=true
+dcos-01 ansible_host=192.168.111.101 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd
+dcos-02 ansible_host=192.168.111.102 ansible_user=swift ansible_become_user=root ansible_become_pass=passw0rd 
+
+[local]
+controller ansible_connection=local
+
+[bootstrap]
+dcos-00
+
+[master]
+dcos-01
+
+[agent]
+dcos-02
+
+[cluster:children]
+master
+agent
