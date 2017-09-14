@@ -1,0 +1,17 @@
+---
+
+host_default_vars:
+  ansible_user: swift
+  ansible_become_user: root
+  ansible_become_pass: passw0rd
+
+hosts:
+  dcos_00:
+    hostname: cluster-dcos-00
+    address: 192.168.111.100
+  dcos_01:
+    hostname: cluster-dcos-01
+    address: 192.168.111.101
+  dcos_02:
+    hostname: cluster-dcos-02
+    address: 192.168.111.102

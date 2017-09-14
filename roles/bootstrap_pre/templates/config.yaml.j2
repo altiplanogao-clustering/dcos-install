@@ -1,0 +1,38 @@
+---
+agent_list:
+{% for nd in groups['agents'] %}
+ - {{ hostvars[nd]['ansible_host'] }}
+{% endfor %}
+# - <agent-private-ip-1>
+# - <agent-private-ip-2>
+# Use this bootstrap_url value unless you have moved the DC/OS installer assets.
+bootstrap_url: http://{{ hostvars[groups['bootstrap'][0]]['ansible_host'] }}:9999
+cluster_name: {{ cluster_name }}
+exhibitor_storage_backend: static
+# master_discovery: static
+ip_detect_public_filename: /dcos/genconf/ip-detect
+oauth_enabled: 'false'
+master_list:
+{% for nd in groups['masters'] %}
+ - {{ hostvars[nd]['ansible_host'] }}
+{% endfor %}
+master_list:
+{% for nd in groups['masters'] %}
+ - {{ hostvars[nd]['ansible_host'] }}
+{% endfor %}
+# # - <master-private-ip-1>
+# # - <master-private-ip-2>
+# # - <master-private-ip-3>
+# public_agent_list:
+# - <public-agent-private-ip>
+# resolvers:
+# - 8.8.4.4
+# - 8.8.8.8
+# ssh_port: 22
+# ssh_user: <username>
+# use_proxy: 'true'
+# http_proxy: http://<proxy_host>:<http_proxy_port>
+# https_proxy: https://<proxy_host>:<https_proxy_port>
+# no_proxy: 
+# - 'foo.bar.com'
+# - '.baz.com'

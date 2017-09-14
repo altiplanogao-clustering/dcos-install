@@ -1,5 +1,9 @@
 ---
 
+- debug: msg={{ group_names }}
+- debug: msg={{ hostvars[groups['bootstrap'][0]]['ansible_host'] }}
+- debug: msg={{ groups['agents'] }}
+
 - name: Disable sudo password prompts
   lineinfile:
     path: /etc/sudoers

@@ -8,12 +8,12 @@ controller ansible_connection=local
 [bootstrap]
 dcos-00
 
-[master]
+[masters]
 dcos-01
 
-[agent]
+[agents]
 dcos-02
 
 [cluster:children]
-master
-agent
+masters
+agents

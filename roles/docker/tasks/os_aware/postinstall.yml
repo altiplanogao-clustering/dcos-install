@@ -1,8 +1,10 @@
 ---
 
 # # Manage Docker as a non-root user (affect after logout and logback, try "$ docker run hello-world")
-# - name: Present docker group, (manage docker as no-root user)
-#   group: name='{{ docker_group }}' state=present
+- name: Present docker group, (manage docker as no-root user)
+  group: name=docker state=present
+- name: Present nogroup group
+  group: name=nogroup state=present
 # - name: Add user to docker group, (manage docker as no-root user)
 #   user:
 #     name: "{{ dev_user }}"

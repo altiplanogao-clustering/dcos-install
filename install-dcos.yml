@@ -1,7 +1,7 @@
 ---
 
 - name: All Software Prerequisites
-  hosts: all
+  hosts: cluster:bootstrap
   become: yes
   become_method: sudo
   vars_files:
@@ -17,6 +17,7 @@
   become_method: sudo
   vars_files:
     - ./vars/config.yml
+    - conf/dcos_conf.yml
     # - .config.yml
   roles:
     - python

@@ -1,4 +1,22 @@
 ---
 
-- name: make genconf
-  file: path="/genconf" state=directory
+- name: make dcos directory
+  file: path="/dcos" state=directory
+
+- name: make dcos/genconf directory
+  file: path="/dcos/genconf" state=directory
+
+- name: put ip-detect file
+  copy:
+    src: scripts/ip-detect
+    dest: /dcos/genconf/ip-detect
+- name: make config
+  template:
+    src: config.yaml.j2
+    dest: /dcos/genconf/config.yaml
+
+- name: Download {{ pkg_ic.file }}
+  cached_get_url:
+    cached: "{{ resource_cache }}/dcos_generate_config-v1.9.sh"
+    url: "https://downloads.dcos.io/dcos/stable/dcos_generate_config.sh"
+    dest: '/dcos/dcos_generate_config.sh'
