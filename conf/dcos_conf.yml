@@ -1,3 +1,12 @@
 ---
 
 cluster_name: "dcos_cluster"
+
+bootstrap:
+  user: deployer
+  group: wheel
+  password: deployer
+  working_dir: /dcos
+
+# docker:
+#   user: 

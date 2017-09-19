@@ -1,22 +1,56 @@
 ---
 
-- name: make dcos directory
-  file: path="/dcos" state=directory
+- name: Present user account
+  user:
+    name: "{{ bootstrap.user }}"
+    comment: "{{ bootstrap.user}}"
+    group: "{{ bootstrap.group }}"
+    shell: /bin/bash
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+    ssh_key_file: ".ssh/id_rsa"
+- name: Configure user password
+  raw: echo "{{ bootstrap.user}}:{{ bootstrap.password }}"  | chpasswd
 
-- name: make dcos/genconf directory
-  file: path="/dcos/genconf" state=directory
 
+- name: make working directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ bootstrap.user }}"
+    group: "{{ bootstrap.group }}"
+  with_items:
+    - "{{ bootstrap.working_dir }}"
+    - "{{ bootstrap.working_dir }}/genconf"
 - name: put ip-detect file
   copy:
     src: scripts/ip-detect
-    dest: /dcos/genconf/ip-detect
+    dest: '{{ bootstrap.working_dir }}/genconf/ip-detect'
+    owner: "{{ bootstrap.user }}"
+    group: "{{ bootstrap.group }}"
+    mode: 0755
 - name: make config
   template:
     src: config.yaml.j2
-    dest: /dcos/genconf/config.yaml
-
+    dest: '{{ bootstrap.working_dir }}/genconf/config.yaml'
+    owner: "{{ bootstrap.user }}"
+    group: "{{ bootstrap.group }}"
 - name: Download {{ pkg_ic.file }}
   cached_get_url:
     cached: "{{ resource_cache }}/dcos_generate_config-v1.9.sh"
     url: "https://downloads.dcos.io/dcos/stable/dcos_generate_config.sh"
-    dest: '/dcos/dcos_generate_config.sh'
+    dest: '{{ bootstrap.working_dir }}/dcos_generate_config.sh'
+    owner: "{{ bootstrap.user }}"
+    group: "{{ bootstrap.group }}"
+    mode: 0755
+
+- name: Copy private SSH key to genconf/ssh_key
+  copy:
+    src: "/home/{{ bootstrap.user }}/.ssh/id_rsa"
+    dest: '{{ bootstrap.working_dir }}/genconf/ssh_key'
+    owner: "{{ bootstrap.user }}"
+    group: "{{ bootstrap.group }}"
+    mode: 0600
+    remote_src: yes
+
+

@@ -6,16 +6,15 @@ agent_list:
 # - <agent-private-ip-1>
 # - <agent-private-ip-2>
 # Use this bootstrap_url value unless you have moved the DC/OS installer assets.
-bootstrap_url: http://{{ hostvars[groups['bootstrap'][0]]['ansible_host'] }}:9999
+bootstrap_url: file:///opt/dcos_install_tmp
+# bootstrap_url: http://{{ hostvars[groups['bootstrap'][0]]['ansible_host'] }}:9999
 cluster_name: {{ cluster_name }}
 exhibitor_storage_backend: static
-# master_discovery: static
+master_discovery: static
+ip_detect_path: genconf/ip-detect
 ip_detect_public_filename: /dcos/genconf/ip-detect
-oauth_enabled: 'false'
-master_list:
-{% for nd in groups['masters'] %}
- - {{ hostvars[nd]['ansible_host'] }}
-{% endfor %}
+auth_enabled: false
+oauth_enabled: false
 master_list:
 {% for nd in groups['masters'] %}
  - {{ hostvars[nd]['ansible_host'] }}

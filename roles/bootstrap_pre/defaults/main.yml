@@ -1,0 +1,8 @@
+---
+
+bootstrap:
+  user: default_deployer
+  group: nobody
+  password: default_deployer
+  working_dir: /dcos_dir
+
