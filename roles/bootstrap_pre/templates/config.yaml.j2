@@ -12,7 +12,7 @@ cluster_name: {{ cluster_name }}
 exhibitor_storage_backend: static
 master_discovery: static
 ip_detect_path: genconf/ip-detect
-ip_detect_public_filename: /dcos/genconf/ip-detect
+ip_detect_public_filename: genconf/ip-detect-by-master_ip
 auth_enabled: false
 oauth_enabled: false
 master_list:
@@ -27,8 +27,8 @@ master_list:
 # resolvers:
 # - 8.8.4.4
 # - 8.8.8.8
-# ssh_port: 22
-# ssh_user: <username>
+ssh_port: 22
+ssh_user: {{ bootstrap.user }}
 # use_proxy: 'true'
 # http_proxy: http://<proxy_host>:<http_proxy_port>
 # https_proxy: https://<proxy_host>:<https_proxy_port>

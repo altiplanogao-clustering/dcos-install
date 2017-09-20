@@ -1,5 +1,7 @@
 ---
 
+resource_cache: "{{ playbook_dir | dirname }}/.resources"
+
 cluster_name: "dcos_cluster"
 
 bootstrap:

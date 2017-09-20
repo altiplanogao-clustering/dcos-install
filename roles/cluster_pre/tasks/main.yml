@@ -18,20 +18,20 @@
     src: /etc/sysconfig/selinux
     dest: /etc/sysconfig/selinux.bk
   when: ( not bkstat.stat.exists )
-- name: Check selinux permissive
-  shell: cat /etc/sysconfig/selinux  | grep ^SELINUX=permissive | wc -l
+- name: Check selinux disabled
+  shell: cat /etc/sysconfig/selinux  | grep ^SELINUX=disabled | wc -l
   register: selinux_disabled_res
   changed_when: False
-- name: Check selinux permissive, set fact
+- name: Check selinux disabled, set fact
   set_fact:
-    selinux_disabled: "{{ (selinux_disabled_res.stdout == '0') | ternary(false, true) }}"
+    selinux_disabled: "{{ (selinux_disabled_res.stdout == '1') | ternary(true, false) }}"
 - name: Disable selinux
   block:
     - name: Update selinux configuration
       lineinfile:
         path: /etc/sysconfig/selinux
         regexp: '^SELINUX='
-        line: 'SELINUX=permissive'
+        line: 'SELINUX=disabled'
 
     - name: Get uptime
       shell: uptime
@@ -57,21 +57,45 @@
       debug: msg='Uptime {{ utstat.stdout }}'
   when: not selinux_disabled
 
-  # wait_for: >
-  #   host={{ inventory_hostname }}
-  #   port=22
-  #   delay=1
-  #   timeout=60
-  # delegate_to: localhost
-  # sudo: false
-
-# - name: Restart server
-#   shell: reboot
-# - name: Wait for server to restart
-#   local_action:
-#     module: wait_for
-#       host={{ inventory_hostname }}
-#       port=22
-#       delay=1
-#       timeout=300
-    # sudo: false
+- name: Configure Deploy User
+  block:
+    - name: Configure Deploy User
+      user:
+        name: "{{ bootstrap.user }}"
+        comment: "{{ bootstrap.user}}"
+        group: "{{ bootstrap.group }}"
+        shell: /bin/bash
+    - name: Configure user password
+      raw: echo "{{ bootstrap.user}}:{{ bootstrap.password }}"  | chpasswd
+    - name: Make .ssh dir
+      file:
+        path: "/home/{{ bootstrap.user }}/.ssh"
+        state: directory
+        owner: "{{ bootstrap.user }}"
+        group: "{{ bootstrap.group }}"
+    - name: Make authorized_keys file
+      file:
+        path: "/home/{{ bootstrap.user }}/.ssh/authorized_keys"
+        state: touch
+        owner: "{{ bootstrap.user }}"
+        group: "{{ bootstrap.group }}"
+    - name: Authenticate to bootstrap, evaluate
+      slurp:
+        src: "/home/{{ bootstrap.user }}/.ssh/id_rsa.pub"
+      register: id_rsa_pub
+      delegate_to: boot
+      become: true
+      run_once: true
+    - debug:
+        msg: "{{ id_rsa_pub['content'] | b64decode }}"
+    # - name: Authenticate to bootstrap
+    #   lineinfile:
+    #     path: "/home/{{ bootstrap.user }}/.ssh/authorized_keys"
+    #     line: "{{ id_rsa_pub['content'] | b64decode }}"
+    - name: Authenticate to bootstrap
+      blockinfile:
+        path: "/home/{{ bootstrap.user }}/.ssh/authorized_keys"
+        marker: "# {mark} TRUST BOOTSTRAP"
+        block: |
+          {{ id_rsa_pub['content'] | b64decode }}
+  when: ( 'cluster' in group_names ) 

@@ -29,17 +29,24 @@
     owner: "{{ bootstrap.user }}"
     group: "{{ bootstrap.group }}"
     mode: 0755
+- name: put ip-detect-by-master_ip file
+  template:
+    src: ip-detect-by-master_ip.j2
+    dest: '{{ bootstrap.working_dir }}/genconf/ip-detect-by-master_ip'
+    owner: "{{ bootstrap.user }}"
+    group: "{{ bootstrap.group }}"
+    mode: 0755
 - name: make config
   template:
     src: config.yaml.j2
     dest: '{{ bootstrap.working_dir }}/genconf/config.yaml'
     owner: "{{ bootstrap.user }}"
     group: "{{ bootstrap.group }}"
-- name: Download {{ pkg_ic.file }}
+- name: Download {{ pkg_ic.name }}
   cached_get_url:
-    cached: "{{ resource_cache }}/dcos_generate_config-v1.9.sh"
-    url: "https://downloads.dcos.io/dcos/stable/dcos_generate_config.sh"
-    dest: '{{ bootstrap.working_dir }}/dcos_generate_config.sh'
+    cached: "{{ resource_cache }}/{{ pkg_ic.cache_file }}"
+    url: "{{ pkg_ic.url }}"
+    dest: '{{ bootstrap.working_dir }}/{{ pkg_ic.file }}'
     owner: "{{ bootstrap.user }}"
     group: "{{ bootstrap.group }}"
     mode: 0755

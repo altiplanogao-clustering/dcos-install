@@ -5,9 +5,11 @@
   become: yes
   become_method: sudo
   vars_files:
-    - ./vars/config.yml
-    # - .config.yml
+    - [./conf/dcos_conf.yml, .config.yml]
   roles:
+    - system
+    - proxy
+    - sources
     - docker
     - dcos_pre
 
@@ -16,8 +18,7 @@
   become: yes
   become_method: sudo
   vars_files:
-    - ./vars/config.yml
-    - conf/dcos_conf.yml
+    - ./conf/dcos_conf.yml
     # - .config.yml
   roles:
     - python
@@ -28,7 +29,7 @@
   become: yes
   become_method: sudo
   vars_files:
-    - ./vars/config.yml
+    - ./conf/dcos_conf.yml
     # - .config.yml
   roles:
     - cluster_pre

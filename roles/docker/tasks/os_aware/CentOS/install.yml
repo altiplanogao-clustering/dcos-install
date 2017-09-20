@@ -6,6 +6,13 @@
     enabled: no
     state: stopped
 
+- name: Docker daemon stop
+  systemd:
+    state: stopped
+    enabled: false
+    name: docker
+  failed_when: false
+
 - name: Pick install script
   include: "install_using_{{ repo_install | ternary('repo', 'package') }}.yml"
   static: no

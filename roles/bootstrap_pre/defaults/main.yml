@@ -1,5 +1,11 @@
 ---
 
+pkg_ic:
+  name: dcos_generate_config
+  url: "https://downloads.dcos.io/dcos/stable/dcos_generate_config.sh"
+  cache_file: 'dcos_generate_config-v1.9.sh'
+  file: 'dcos_generate_config.sh'
+
 bootstrap:
   user: default_deployer
   group: nobody
